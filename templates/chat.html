@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat with Gemini</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="chat-container">
+        <h1>Vinee Chatbot</h1>
+        <form method="post">
+            <textarea name="message" placeholder="Type your message here..." required>{{ user_message or '' }}</textarea>
+            <button type="submit">Send</button>
+        </form>
+
+        {% if response %}
+        <div class="response-box">
+            <strong>Gemini:</strong>
+            <p>{{ response }}</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

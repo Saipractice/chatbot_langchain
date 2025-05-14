@@ -1,9 +1,10 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-from langchain.chains import ConversationChain
-from langchain.memory import ConversationBufferMemory
 
 import os
 from dotenv import load_dotenv
@@ -20,16 +21,19 @@ llm = ChatGoogleGenerativeAI(
 )
 
 app = FastAPI()
+templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 class ChatInput(BaseModel):
     message: str
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello World"}
 
+@app.get("/", response_class=HTMLResponse)
+async def get_chat_page(request: Request):
+    return templates.TemplateResponse("chat.html", {"request": request, "response": ""})
 
-@app.post("/chat")
-async def chat(input: ChatInput):
-    response = llm.invoke(input.message)
-    return {"response": response}
+@app.post("/", response_class=HTMLResponse)
+async def post_chat(request: Request, message: str = Form(...)):
+    response = llm.invoke(message)
+    return templates.TemplateResponse("chat.html", {"request": request, "user_message": message, "response": response.content})
