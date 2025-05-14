@@ -5,4 +5,4 @@ langchain-google-genai
 google-generativeai
 python-dotenv
 jinja2
-python
+python-multipart
